@@ -1,0 +1,36 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'entries'>;
+}
+
+const { entry } = Astro.props;
+
+const depthSymbol: Record<string, string> = {
+  'quick-read': '▸',
+  repetition: '▸▸',
+  solid: '▸▸',
+  deep: '▸▸▸',
+};
+const depthClass: Record<string, string> = {
+  'quick-read': 'depth-quick',
+  repetition: 'depth-repetition',
+  solid: 'depth-solid',
+  deep: 'depth-deep',
+};
+---
+
+<a
+  href={`/entry/${entry.id}`}
+  class="entry-card"
+  data-entry
+  data-search={`${entry.data.title} ${entry.data.tags.join(' ')}`.toLowerCase()}
+>
+  <span class="entry-card-date">{entry.data.date.toISOString().slice(0, 10)}</span>
+  <span class={`entry-card-depth ${depthClass[entry.data.depth]}`}>{depthSymbol[entry.data.depth]}</span>
+  <span class="entry-card-title">{entry.data.title}</span>
+  <span class="entry-card-tags">
+    {entry.data.tags.map((t) => <span class="tag-chip">#{t}</span>)}
+  </span>
+</a>

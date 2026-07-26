@@ -1,0 +1,80 @@
+---
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('entries');
+  return entries.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const depthColor: Record<string, string> = {
+  'quick-read': 'depth-quick',
+  solid: 'depth-solid',
+  deep: 'depth-deep',
+  repetition: 'depth-repetition',
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{entry.data.title} // study-log</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles/global.css" />
+  </head>
+  <body>
+    <main>
+      <div class="prompt-line back-line">
+        <a href="/" class="back-link">← cd ..</a>
+      </div>
+
+      <article class="entry-detail">
+        <header class="entry-detail-header">
+          <div class="commit-hash">{entry.id.slice(0, 8)}</div>
+          <h1 class="entry-detail-title">{entry.data.title}</h1>
+          <div class="entry-meta-row">
+            <span class="entry-date">{entry.data.date.toISOString().slice(0, 10)}</span>
+            <span class={`depth-badge ${depthColor[entry.data.depth]}`}>{entry.data.depth}</span>
+            <span class="tags-inline">
+              {entry.data.tags.map((t) => <span class="tag-chip">#{t}</span>)}
+            </span>
+          </div>
+          {entry.data.summary && <p class="entry-summary">{entry.data.summary}</p>}
+        </header>
+
+        {entry.data.links && entry.data.links.length > 0 && (
+          <div class="links-block">
+            <span class="links-label">## refs</span>
+            <ul class="links-list">
+              {entry.data.links.map((l) => (
+                <li><span class="link-arrow">→</span> <a href={l.url} target="_blank" rel="noopener">{l.label}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div class="entry-body">
+          <Content />
+        </div>
+      </article>
+    </main>
+
+    <script is:inline>
+      // Esc goes back to the index (cd ..), matching the vim-nav convention.
+      document.addEventListener('keydown', (e) => {
+        const t = e.target;
+        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          window.location.href = '/';
+        }
+      });
+    </script>
+  </body>
+</html>

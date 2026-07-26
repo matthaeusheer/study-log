@@ -1,0 +1,36 @@
+---
+interface Props {
+  tags: [string, number][];
+}
+const { tags } = Astro.props;
+
+// Scale font size by frequency. Map [min..max] count → [0.85rem .. 2.2rem].
+const counts = tags.map(([, c]) => c);
+const min = Math.min(...counts);
+const max = Math.max(...counts);
+// Stay around the entry-list text size (0.9rem); scale only subtly by frequency.
+const MIN_REM = 0.8;
+const MAX_REM = 1.1;
+
+function sizeFor(count: number): number {
+  if (max === min) return (MIN_REM + MAX_REM) / 2;
+  const t = (count - min) / (max - min);
+  return MIN_REM + t * (MAX_REM - MIN_REM);
+}
+
+const items = tags.map(([tag, count]) => ({
+  tag,
+  count,
+  size: sizeFor(count),
+}));
+---
+
+<div class="word-cloud">
+  {items.map((item) => (
+    <span
+      class="word-cloud-item"
+      style={`font-size: ${item.size.toFixed(2)}rem`}
+      title={`${item.count} ${item.count === 1 ? 'entry' : 'entries'}`}
+    >{item.tag}</span>
+  ))}
+</div>

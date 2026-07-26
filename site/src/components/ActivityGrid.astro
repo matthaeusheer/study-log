@@ -1,0 +1,139 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entries: CollectionEntry<'entries'>[];
+  monthsBack?: number;
+  monthsForward?: number;
+}
+
+const { entries, monthsBack = 3, monthsForward = 2 } = Astro.props;
+
+const DEPTH_SCORE: Record<string, number> = {
+  'quick-read': 1,
+  repetition: 2,
+  solid: 3,
+  deep: 5,
+};
+
+// Build a map of date string → { score, titles }
+const dayMap = new Map<string, { score: number; titles: string[] }>();
+for (const entry of entries) {
+  const key = entry.data.date.toISOString().slice(0, 10);
+  const existing = dayMap.get(key) ?? { score: 0, titles: [] };
+  existing.score += DEPTH_SCORE[entry.data.depth] ?? 1;
+  existing.titles.push(entry.data.title);
+  dayMap.set(key, existing);
+}
+
+function scoreToLevel(score: number): number {
+  if (score === 0) return 0;
+  if (score <= 2) return 1;
+  if (score <= 4) return 2;
+  if (score <= 7) return 3;
+  return 4;
+}
+
+// Window: 6 months centered on the current month — monthsBack in the past,
+// the current month, and monthsForward ahead. Snap to whole Sun–Sat weeks.
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+// First day of the month, monthsBack months ago.
+const rangeStart = new Date(today.getFullYear(), today.getMonth() - monthsBack, 1);
+// Last day of the month, monthsForward months ahead.
+const rangeEnd = new Date(today.getFullYear(), today.getMonth() + monthsForward + 1, 0);
+
+// Snap start back to its Sunday, end forward to its Saturday.
+const gridStart = new Date(rangeStart);
+gridStart.setDate(rangeStart.getDate() - rangeStart.getDay()); // Sun
+const gridEnd = new Date(rangeEnd);
+gridEnd.setDate(rangeEnd.getDate() + (6 - rangeEnd.getDay())); // Sat
+
+const totalDays = Math.round((gridEnd.getTime() - gridStart.getTime()) / 86_400_000) + 1;
+const weeks = totalDays / 7;
+
+interface Cell {
+  date: string;
+  level: number;
+  titles: string[];
+  inFuture: boolean;
+}
+
+const columns: Cell[][] = [];
+const todayStr = today.toISOString().slice(0, 10);
+
+for (let w = 0; w < weeks; w++) {
+  const col: Cell[] = [];
+  for (let d = 0; d < 7; d++) {
+    const offset = w * 7 + d;
+    const cellDate = new Date(gridStart);
+    cellDate.setDate(gridStart.getDate() + offset);
+    const dateStr = cellDate.toISOString().slice(0, 10);
+    const data = dayMap.get(dateStr);
+    col.push({
+      date: dateStr,
+      level: data ? scoreToLevel(data.score) : 0,
+      titles: data?.titles ?? [],
+      inFuture: dateStr > todayStr,
+    });
+  }
+  columns.push(col);
+}
+
+// Month labels: a column belongs to whichever month owns most of its days —
+// use the midweek day (Wednesday, index 3). Label the first column of each new
+// majority-month. This ignores partial edge weeks that straddle two months, so
+// every full month gets exactly one label and none collide.
+const monthOf = (col: Cell[]) => new Date(col[3].date).getMonth();
+const rangeStartMs = rangeStart.getTime();
+const rangeEndMs = rangeEnd.getTime();
+const monthLabels: (string | null)[] = columns.map((col, i) => {
+  if (i > 0 && monthOf(col) === monthOf(columns[i - 1])) return null;
+  // Only label months whose midweek falls inside the requested range, so the
+  // partial edge weeks snapped in for calendar alignment don't add stray months.
+  const mid = new Date(col[3].date).getTime();
+  if (mid < rangeStartMs || mid > rangeEndMs) return null;
+  return new Date(col[3].date).toLocaleString('en', { month: 'short' });
+});
+
+// Rows are Sun–Sat (top→bottom); label Mon/Wed/Fri so they sit centered.
+const DAY_LABELS = ['', 'Mon', '', 'Wed', '', 'Fri', ''];
+---
+
+<div class="activity-grid-wrap">
+ <div class="grid-inner">
+  <div class="grid-month-labels">
+    <div class="grid-day-spacer"></div>
+    {monthLabels.map((label) => (
+      <div class="grid-month-cell">{label ?? ''}</div>
+    ))}
+  </div>
+  <div class="grid-body">
+    <div class="grid-day-labels">
+      {DAY_LABELS.map((label) => <div class="grid-day-label">{label}</div>)}
+    </div>
+    <div class="grid-columns">
+      {columns.map((col) => (
+        <div class="grid-col">
+          {col.map((cell) => (
+            <div
+              class={`grid-cell level-${cell.inFuture ? 'future' : cell.level}`}
+              data-date={cell.date}
+              data-titles={cell.titles.join('|')}
+              title={cell.titles.length
+                ? `${cell.date}\n${cell.titles.join('\n')}`
+                : cell.date}
+            ></div>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+  <div class="grid-legend">
+    <span class="legend-label">less</span>
+    {[0, 1, 2, 3, 4].map((l) => <div class={`grid-cell level-${l}`}></div>)}
+    <span class="legend-label">more</span>
+  </div>
+ </div>
+</div>

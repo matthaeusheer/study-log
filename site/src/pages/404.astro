@@ -1,0 +1,39 @@
+---
+// Shell-style 404. The requested path is only known at request time on a
+// static host, so it's filled in client-side.
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>404 // study-log</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles/global.css" />
+  </head>
+  <body>
+    <main>
+      <div class="notfound">
+        <div class="prompt-line">
+          <span class="prompt-mark">&gt;</span><span class="cmd"> cd <span id="nf-path">/…</span></span>
+        </div>
+        <p class="nf-error">
+          bash: cd: <span id="nf-path-2">/…</span>: No such file or directory
+        </p>
+        <div class="prompt-line nf-home">
+          <span class="prompt-mark">&gt;</span><span class="cmd"> cd </span><a href="/" class="nf-link">~</a>
+        </div>
+      </div>
+    </main>
+
+    <script is:inline>
+      // Interpolate the path the user actually hit.
+      const path = window.location.pathname + window.location.search;
+      document.getElementById('nf-path').textContent = path;
+      document.getElementById('nf-path-2').textContent = path;
+    </script>
+  </body>
+</html>

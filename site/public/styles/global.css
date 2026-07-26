@@ -1,0 +1,552 @@
+/* Tokyo Night palette */
+:root {
+  --bg:        #0D1117;
+  --bg-alt:    #161b22;
+  --bg-border: #21262d;
+  --fg:        #c0caf5;
+  --fg-dim:    #565f89;
+  --fg-muted:  #3b4261;
+  --blue:      #7aa2f7;
+  --cyan:      #7dcfff;
+  --green:     #9ece6a;
+  --yellow:    #e0af68;
+  --orange:    #ff9e64;
+  --red:       #f7768e;
+  --purple:    #bb9af7;
+
+  /* activity grid greens (GitHub-dark tuned) */
+  --grid-0:    #151A23;
+  --grid-1:    #013A16;
+  --grid-2:    #186C2D;
+  --grid-3:    #57D364;
+  --grid-4:    #57D364;
+  /* readable mid-tone for secondary labels: grid month/day, entry dates,
+     keyhint, legend — brighter than --fg-dim without competing with body text */
+  --grid-label: #8b95b8;
+  --magenta:   #c678dd;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+body {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+main {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ── prompt line ─────────────────────────────────────────── */
+
+.prompt-line {
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+.prompt-mark { color: var(--green); font-weight: 700; }
+.cmd         { color: var(--fg); }
+
+/* ── 404 ─────────────────────────────────────────────────── */
+
+.notfound {
+  margin-top: 4rem;
+}
+
+.nf-error {
+  color: var(--red);
+  font-size: 0.9rem;
+  margin: 0.25rem 0 1.75rem;
+}
+
+.nf-home { margin-bottom: 0; }
+
+.nf-link {
+  color: var(--cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.nf-link:hover { color: var(--blue); }
+
+/* ── site header / readme box ────────────────────────────── */
+
+.site-header {
+  margin-bottom: 3rem;
+}
+
+.readme-box {
+  border: 1px solid var(--bg-border);
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-alt);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.readme-title {
+  color: var(--yellow);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* ── section ─────────────────────────────────────────────── */
+
+.section {
+  margin-bottom: 3rem;
+}
+
+/* ── entry list (git log style) ──────────────────────────── */
+
+.entry-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--bg-border);
+  background: var(--bg-alt);
+  /* Show ~10 rows, then scroll internally for the rest. */
+  max-height: 24rem;
+  overflow-y: auto;
+  /* Firefox: thin, subtle dark scrollbar. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-border) transparent;
+}
+
+/* WebKit (Chrome/Safari): barely-visible dark scrollbar. */
+.entry-list::-webkit-scrollbar {
+  width: 8px;
+}
+.entry-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.entry-list::-webkit-scrollbar-thumb {
+  background: var(--bg-border);
+  border-radius: 4px;
+}
+.entry-list::-webkit-scrollbar-thumb:hover {
+  background: var(--fg-muted);
+}
+
+.entry-card {
+  display: grid;
+  grid-template-columns: 10ch 2.5ch 1fr;
+  grid-template-rows: auto auto;
+  gap: 0 0.75rem;
+  align-items: baseline;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--bg-border);
+  transition: background 0.1s;
+  cursor: pointer;
+}
+
+.entry-card:hover {
+  background: var(--bg-alt);
+}
+
+.entry-card-date {
+  color: var(--grid-label);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.entry-card-depth {
+  font-size: 0.75rem;
+  text-align: center;
+}
+.entry-card-depth.depth-deep       { color: var(--red); }
+.entry-card-depth.depth-solid      { color: var(--yellow); }
+.entry-card-depth.depth-quick      { color: var(--green); }
+.entry-card-depth.depth-repetition { color: var(--cyan); }
+
+.entry-card-title {
+  color: var(--blue);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.entry-card-tags {
+  grid-column: 3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+}
+
+.tag-chip {
+  color: var(--purple);
+  font-size: 0.72rem;
+}
+
+/* ── vim selection (cursorline) ──────────────────────────── */
+
+.entry-card {
+  border-left: 2px solid transparent;
+}
+
+.entry-card.is-selected {
+  background: var(--bg-border);
+  border-left: 2px solid var(--green);
+}
+
+.entry-empty {
+  padding: 0.9rem 1rem;
+  color: var(--fg-dim);
+  font-size: 0.82rem;
+  font-style: italic;
+}
+
+/* ── keybinding hint line ────────────────────────────────── */
+
+.keyhint {
+  color: var(--grid-label);
+  font-size: 0.75rem;
+  margin: -0.25rem 0 0.75rem;
+  padding-left: 0.1rem;
+}
+
+.keyhint-key {
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+.keyhint-sep {
+  color: var(--grid-label);
+  margin: 0 0.15rem;
+}
+
+/* ── entry search bar ────────────────────────────────────── */
+
+.entry-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--bg-border);
+  border-bottom: none;
+  background: var(--bg);
+  padding: 0.5rem 0.9rem;
+}
+
+.search-mark {
+  color: var(--green);
+  font-weight: 700;
+}
+
+.entry-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+.entry-search-input::placeholder { color: var(--fg-muted); }
+
+.search-count {
+  color: var(--fg-dim);
+  font-size: 0.72rem;
+}
+
+/* The `hidden` attribute must win over any display rules (search bar, etc.). */
+[hidden] { display: none !important; }
+
+/* ── word cloud ──────────────────────────────────────────── */
+
+.word-cloud {
+  border: 1px solid var(--bg-border);
+  padding: 1.5rem 1.75rem;
+  background: var(--bg-alt);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem 1.1rem;
+  line-height: 1.2;
+}
+
+.word-cloud-item {
+  color: var(--fg);
+  font-weight: 400;
+  white-space: nowrap;
+  transition: opacity 0.1s;
+  cursor: default;
+}
+.word-cloud-item:hover { opacity: 0.6; }
+
+/* ── entry detail page ───────────────────────────────────── */
+
+.back-line {
+  margin-bottom: 1.5rem;
+}
+.back-link {
+  color: var(--fg-dim);
+  font-size: 0.85rem;
+  transition: color 0.1s;
+}
+.back-link:hover { color: var(--blue); }
+
+.entry-detail {
+  border: 1px solid var(--bg-border);
+  background: var(--bg-alt);
+}
+
+.entry-detail-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--bg-border);
+}
+
+.commit-hash {
+  color: var(--yellow);
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.entry-detail-title {
+  color: var(--blue);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.entry-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.8rem;
+}
+
+.entry-date { color: var(--fg-dim); }
+
+.depth-badge {
+  padding: 0.1rem 0.5rem;
+  border: 1px solid currentColor;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.depth-badge.depth-deep  { color: var(--red); }
+.depth-badge.depth-solid { color: var(--yellow); }
+.depth-badge.depth-quick { color: var(--green); }
+
+.tags-inline { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+.entry-summary {
+  color: var(--fg-dim);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  font-style: italic;
+  border-left: 2px solid var(--bg-border);
+  padding-left: 0.75rem;
+}
+
+.links-block {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--bg-border);
+}
+
+.links-label {
+  color: var(--yellow);
+  font-size: 0.8rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.links-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.links-list a {
+  color: var(--cyan);
+  font-size: 0.82rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.links-list a:hover { color: var(--blue); }
+
+.link-arrow { color: var(--fg-muted); margin-right: 0.4rem; }
+
+/* ── entry body (rendered markdown) ─────────────────────── */
+
+.entry-body {
+  padding: 1.5rem;
+}
+
+.entry-body h2 {
+  color: var(--yellow);
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 1.5rem 0 0.5rem;
+}
+.entry-body h2::before { content: '## '; color: var(--fg-muted); }
+
+.entry-body h3 {
+  color: var(--cyan);
+  font-size: 0.85rem;
+  margin: 1rem 0 0.4rem;
+}
+.entry-body h3::before { content: '### '; color: var(--fg-muted); }
+
+.entry-body p {
+  margin-bottom: 0.75rem;
+  font-size: 0.88rem;
+  color: var(--fg);
+}
+
+.entry-body ul, .entry-body ol {
+  margin: 0.5rem 0 0.75rem 1.5rem;
+  font-size: 0.88rem;
+}
+
+.entry-body li { margin-bottom: 0.3rem; }
+
+.entry-body strong { color: var(--orange); font-weight: 600; }
+
+.entry-body code {
+  background: var(--bg);
+  color: var(--green);
+  padding: 0.1rem 0.35rem;
+  font-size: 0.85em;
+}
+
+.entry-body pre {
+  background: var(--bg);
+  border: 1px solid var(--bg-border);
+  padding: 1rem;
+  margin: 0.75rem 0;
+  overflow-x: auto;
+}
+.entry-body pre code {
+  background: none;
+  padding: 0;
+}
+
+.entry-body blockquote {
+  border-left: 2px solid var(--purple);
+  padding-left: 0.75rem;
+  color: var(--fg-dim);
+  margin: 0.75rem 0;
+  font-style: italic;
+}
+
+/* ── activity grid ───────────────────────────────────────── */
+
+.activity-grid-wrap {
+  border: 1px solid var(--bg-border);
+  background: var(--bg-alt);
+  padding: 1rem 1.25rem 0.75rem;
+  overflow-x: auto;
+}
+
+/* Shrink to exactly the grid width so the legend's right edge (flex-end)
+   aligns with the rightmost column instead of the padded panel edge. */
+.grid-inner {
+  width: max-content;
+}
+
+.grid-month-labels {
+  display: flex;
+  margin-bottom: 0.25rem;
+}
+
+.grid-day-spacer {
+  width: 2.5rem;
+  flex-shrink: 0;
+}
+
+.grid-month-cell {
+  width: 13px;
+  min-width: 13px;
+  max-width: 13px;
+  margin-right: 3px;
+  font-size: 0.78rem;
+  color: var(--grid-label);
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.grid-body {
+  display: flex;
+  gap: 0;
+}
+
+.grid-day-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 2.5rem;
+  flex-shrink: 0;
+}
+
+.grid-day-label {
+  font-size: 0.72rem;
+  color: var(--grid-label);
+  height: 13px;
+  line-height: 13px;
+}
+
+.grid-columns {
+  display: flex;
+  gap: 3px;
+}
+
+.grid-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.grid-cell {
+  width: 13px;
+  height: 13px;
+  border-radius: 2px;
+  cursor: default;
+  flex-shrink: 0;
+  transition: opacity 0.1s;
+}
+
+.grid-cell:hover { opacity: 0.8; }
+
+.grid-cell.level-0      { background: var(--bg-border); }
+.grid-cell.level-1      { background: var(--grid-1); }
+.grid-cell.level-2      { background: var(--grid-2); }
+.grid-cell.level-3      { background: var(--grid-3); }
+.grid-cell.level-4      { background: var(--grid-4); }
+.grid-cell.level-future { background: transparent; box-shadow: inset 0 0 0 1px var(--bg-border); }
+
+.grid-legend {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 0.6rem;
+  justify-content: flex-end;
+}
+
+.legend-label {
+  font-size: 0.72rem;
+  color: var(--grid-label);
+  margin: 0 0.25rem;
+}
+
+/* ── responsive ──────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  .entry-card {
+    grid-template-columns: 8ch 2ch 1fr;
+  }
+  .activity-grid-wrap { padding: 0.75rem; }
+}
