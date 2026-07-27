@@ -40,15 +40,30 @@ the repo root handles the build. Five steps to stand up your own:
 
 ## Adding an entry
 
-Drop a `YYYY-MM-DD-slug.md` file in `entries/` with some frontmatter:
+There's a little helper script, [`bin/study-log`](./bin/study-log). Give it a
+title (depth/tags optional) and it stamps today's date, slugifies the filename,
+writes the frontmatter, and opens the file in `$EDITOR`:
+
+```bash
+study-log "Kubernetes networking deep dive"
+study-log "Rust lifetimes" --depth deep --tags rust,memory
+```
+
+Defaults: `depth: solid`, no tags. Link it once so you can run it from anywhere:
+
+```bash
+ln -sf "$PWD/bin/study-log" ~/.local/bin/study-log   # or any dir on your $PATH
+```
+
+Or skip the script entirely — an entry is just a Markdown file in `entries/`
+named `YYYY-MM-DD-slug.md` (see [`entries/_template.md`](./entries/_template.md)):
 
 ```markdown
 ---
 title: "Kubernetes Networking Deep Dive"
 date: 2026-07-24
 tags: [kubernetes, networking, platform]
-depth: deep          # quick-read | solid | deep | repetition
-summary: "One line on what actually clicked."
+depth: deep          # quick-read | repetition | solid | deep
 links:
   - label: "CNI Spec"
     url: "https://github.com/containernetworking/cni/blob/main/SPEC.md"
@@ -58,7 +73,7 @@ links:
 ...
 ```
 
-The `depth` field is what feeds the heatmap: `quick-read` (1), `repetition` (2),
+The `depth` field feeds the heatmap: `quick-read` (1), `repetition` (2),
 `solid` (3), `deep` (5). Same-day entries stack.
 
 ## Tech Stack

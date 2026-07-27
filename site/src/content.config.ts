@@ -6,7 +6,8 @@ import { resolve, dirname } from 'node:path';
 const entriesDir = resolve(dirname(fileURLToPath(import.meta.url)), '../../entries');
 
 const entries = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: entriesDir }),
+  // Ignore underscore-prefixed files (e.g. _template.md) so they aren't rendered.
+  loader: glob({ pattern: ['**/*.md', '!**/_*.md'], base: entriesDir }),
   schema: z.object({
     title: z.string(),
     date: z.coerce.date(),

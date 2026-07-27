@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+#
+# study-log — scaffold a new study-log entry and open it in your editor.
+#
+# Usage:
+#   study-log "Rust lifetimes and the borrow checker"
+#   study-log "Kubernetes CNI" --depth deep --tags kubernetes,networking
+#
+# Flags:
+#   -d, --depth   quick-read | repetition | solid | deep   (default: solid)
+#   -t, --tags    comma-separated tags                      (default: none)
+#   -h, --help    show this help
+#
+# Works from anywhere: the script resolves its own real path (following the
+# symlink you install into $PATH) to locate the repo's entries/ directory.
+
+set -euo pipefail
+
+# ── resolve the real location of this script (follow symlinks) ──────────────
+source="${BASH_SOURCE[0]}"
+while [ -h "$source" ]; do
+  dir="$(cd -P "$(dirname "$source")" >/dev/null 2>&1 && pwd)"
+  source="$(readlink "$source")"
+  [[ "$source" != /* ]] && source="$dir/$source"
+done
+script_dir="$(cd -P "$(dirname "$source")" >/dev/null 2>&1 && pwd)"
+repo_root="$(cd "$script_dir/.." >/dev/null 2>&1 && pwd)"
+entries_dir="$repo_root/entries"
+
+usage() {
+  sed -n '3,16p' "$source" | sed 's/^# \{0,1\}//; s/^#//'
+  exit "${1:-0}"
+}
+
+# ── parse args ──────────────────────────────────────────────────────────────
+title=""
+depth="solid"
+tags=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -h|--help)  usage 0 ;;
+    -d|--depth) depth="${2:-}"; shift 2 ;;
+    -t|--tags)  tags="${2:-}"; shift 2 ;;
+    -*)         echo "study-log: unknown flag '$1'" >&2; usage 1 ;;
+    *)          title="$1"; shift ;;
+  esac
+done
+
+if [[ -z "$title" ]]; then
+  echo "study-log: a title is required" >&2
+  echo "  e.g. study-log \"Rust lifetimes\" --depth deep --tags rust" >&2
+  exit 1
+fi
+
+case "$depth" in
+  quick-read|repetition|solid|deep) ;;
+  *) echo "study-log: invalid depth '$depth' (quick-read|repetition|solid|deep)" >&2; exit 1 ;;
+esac
+
+# ── slugify the title: lowercase, spaces→dashes, strip non-alphanumerics ─────
+slug="$(printf '%s' "$title" \
+  | tr '[:upper:]' '[:lower:]' \
+  | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')"
+
+date="$(date +%F)"                    # YYYY-MM-DD
+file="$entries_dir/${date}-${slug}.md"
+
+if [[ -e "$file" ]]; then
+  echo "study-log: entry already exists: $file" >&2
+  exit 1
+fi
+
+# ── format tags as a YAML inline list: rust,async → [rust, async] ───────────
+if [[ -n "$tags" ]]; then
+  tags_yaml="[$(printf '%s' "$tags" | sed 's/ *, */, /g')]"
+else
+  tags_yaml="[]"
+fi
+
+# ── write the entry ─────────────────────────────────────────────────────────
+cat > "$file" <<EOF
+---
+title: "$title"
+date: $date
+tags: $tags_yaml
+depth: $depth
+---
+
+## What I studied
+
+## Key insight
+
+## Next
+EOF
+
+echo "Created $file"
+
+# ── open in editor (fall back to VISUAL, then leave it if neither is set) ───
+editor="${EDITOR:-${VISUAL:-}}"
+if [[ -n "$editor" ]]; then
+  exec $editor "$file"
+else
+  echo "(set \$EDITOR to auto-open new entries)"
+fi
