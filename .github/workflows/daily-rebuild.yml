@@ -1,0 +1,24 @@
+name: Daily rebuild
+
+# Keeps the activity grid's "today" marker and month window current. Vercel only
+# rebuilds on git push, so nothing refreshes on days without a commit — this cron
+# pings a Vercel Deploy Hook once a day to trigger a fresh static build.
+
+on:
+  schedule:
+    - cron: "0 5 * * *" # 05:00 UTC daily
+  workflow_dispatch: {} # allow manual runs from the Actions tab
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel deploy
+        run: |
+          if [ -z "${VERCEL_DEPLOY_HOOK}" ]; then
+            echo "VERCEL_DEPLOY_HOOK secret is not set" >&2
+            exit 1
+          fi
+          curl -fsS -X POST "${VERCEL_DEPLOY_HOOK}"
+        env:
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
