@@ -109,6 +109,11 @@ minimal `>` marker (not `user@host:~$`), e.g. `> cat README.md`.
 3. **Entry list** — `git log`-style, newest first, wrapped in a bordered panel (same box treatment as the other sections for visual consistency). Each row: date | depth indicator | title | tags. The panel shows ~7 rows at a time (`> git log --oneline`) and scrolls internally to reveal the rest — the box height is fixed, older entries scroll into view. The depth indicator is a set of `▸` arrows: `quick-read`=▸, `repetition`=▸▸, `solid`=▸▸, `deep`=▸▸▸ (every depth has arrows, colored per the depth palette).
 4. **Word cloud** — the topics/tags rendered as a true word cloud: each tag's font size scales subtly with its frequency, staying around the entry-list text size (~0.9rem baseline, modest range). No `--flag` prefix, no counts, no per-word colors — just the words in the normal text color, sized.
 
+Below the sections sits a minimal **footer**: a centered, dim link to the source
+repo showing the GitHub wordmark. The wordmark PNG is CSS-masked so it's tinted
+in the dim label color (matching the aesthetic) and brightens on hover. Kept
+lightweight — one small (~5KB) image, no extra JS.
+
 ---
 
 ## Activity Grid

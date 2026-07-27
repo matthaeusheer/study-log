@@ -77,6 +77,18 @@ const tags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
         <div class="prompt-line"><span class="prompt-mark">&gt;</span><span class="cmd"> study-log --list-topics</span></div>
         <WordCloud tags={tags} />
       </section>
+
+      <footer class="site-footer">
+        <a
+          class="source-link"
+          href="https://github.com/matthaeusheer/study-log"
+          target="_blank"
+          rel="noopener"
+          aria-label="View source on GitHub"
+        >
+          <span class="gh-wordmark" role="img" aria-hidden="true"></span>
+        </a>
+      </footer>
     </main>
 
     <script is:inline src="/scripts/vim-nav.js"></script>

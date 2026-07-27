@@ -105,6 +105,32 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: 3rem;
 }
 
+/* ── footer (source link) ────────────────────────────────── */
+
+.site-footer {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 0 0.5rem;
+}
+
+.source-link {
+  display: inline-flex;
+  opacity: 0.55;
+  transition: opacity 0.12s;
+}
+.source-link:hover { opacity: 1; }
+
+/* GitHub wordmark PNG tinted via mask so it reads on the dark canvas. */
+.gh-wordmark {
+  display: inline-block;
+  width: 70px;
+  height: 20px;
+  background-color: var(--grid-label);
+  -webkit-mask: url('/github-wordmark.png') center / contain no-repeat;
+  mask: url('/github-wordmark.png') center / contain no-repeat;
+}
+.source-link:hover .gh-wordmark { background-color: var(--fg); }
+
 /* ── entry list (git log style) ──────────────────────────── */
 
 .entry-list {
