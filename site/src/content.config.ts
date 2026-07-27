@@ -1,9 +1,7 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
-import { fileURLToPath } from 'node:url';
-import { resolve, dirname } from 'node:path';
 
-const entriesDir = resolve(dirname(fileURLToPath(import.meta.url)), '../../entries');
+const entriesDir = new URL('../../entries/', import.meta.url);
 
 const entries = defineCollection({
   // Ignore underscore-prefixed files (e.g. _template.md) so they aren't rendered.
