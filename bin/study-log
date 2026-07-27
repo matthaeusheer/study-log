@@ -84,14 +84,15 @@ cat > "$file" <<EOF
 title: "$title"
 date: $date
 tags: $tags_yaml
-depth: $depth
+depth: $depth          # quick-read | repetition | solid | deep
+# links:               # optional — uncomment and fill in
+#   - label: "Resource name"
+#     url: "https://..."
 ---
 
-## What I studied
+## What I Did
 
-## Key insight
-
-## Next
+## Key Insights
 EOF
 
 echo "Created $file"

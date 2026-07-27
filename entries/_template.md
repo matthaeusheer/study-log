@@ -8,8 +8,7 @@ links:
     url: "https://..."
 ---
 
-## What I studied
+## What I Did
 
-## Key insight
+## Key Insights
 
-## Next
