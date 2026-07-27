@@ -9,6 +9,13 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 
+// Same depth indicator style as the entry list (EntryCard).
+const depthSymbol: Record<string, string> = {
+  'quick-read': '▸',
+  repetition: '▸▸',
+  solid: '▸▸',
+  deep: '▸▸▸',
+};
 const depthColor: Record<string, string> = {
   'quick-read': 'depth-quick',
   solid: 'depth-solid',
@@ -38,16 +45,17 @@ const depthColor: Record<string, string> = {
 
       <article class="entry-detail">
         <header class="entry-detail-header">
-          <div class="commit-hash">{entry.id.slice(0, 8)}</div>
+          <div class="entry-detail-date">{entry.data.date.toISOString().slice(0, 10)}</div>
           <h1 class="entry-detail-title">{entry.data.title}</h1>
           <div class="entry-meta-row">
-            <span class="entry-date">{entry.data.date.toISOString().slice(0, 10)}</span>
-            <span class={`depth-badge ${depthColor[entry.data.depth]}`}>{entry.data.depth}</span>
+            <span class={`depth-icon ${depthColor[entry.data.depth]}`}>
+              <span class="depth-icon-arrows">{depthSymbol[entry.data.depth]}</span>
+              <span class="depth-icon-label">{entry.data.depth}</span>
+            </span>
             <span class="tags-inline">
               {entry.data.tags.map((t) => <span class="tag-chip">#{t}</span>)}
             </span>
           </div>
-          {entry.data.summary && <p class="entry-summary">{entry.data.summary}</p>}
         </header>
 
         {entry.data.links && entry.data.links.length > 0 && (

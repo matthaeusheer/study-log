@@ -162,10 +162,10 @@ a { color: inherit; text-decoration: none; }
   font-size: 0.75rem;
   text-align: center;
 }
-.entry-card-depth.depth-deep       { color: var(--red); }
-.entry-card-depth.depth-solid      { color: var(--yellow); }
-.entry-card-depth.depth-quick      { color: var(--green); }
-.entry-card-depth.depth-repetition { color: var(--cyan); }
+.entry-card-depth.depth-deep,       .depth-icon.depth-deep       { color: var(--red); }
+.entry-card-depth.depth-solid,      .depth-icon.depth-solid      { color: var(--yellow); }
+.entry-card-depth.depth-quick,      .depth-icon.depth-quick      { color: var(--green); }
+.entry-card-depth.depth-repetition, .depth-icon.depth-repetition { color: var(--cyan); }
 
 .entry-card-title {
   color: var(--blue);
@@ -304,11 +304,10 @@ a { color: inherit; text-decoration: none; }
   border-bottom: 1px solid var(--bg-border);
 }
 
-.commit-hash {
-  color: var(--yellow);
-  font-size: 0.75rem;
+.entry-detail-date {
+  color: var(--grid-label);
+  font-size: 0.8rem;
   margin-bottom: 0.5rem;
-  font-weight: 600;
 }
 
 .entry-detail-title {
@@ -323,33 +322,30 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.75rem 1rem;
   margin-bottom: 0.75rem;
   font-size: 0.8rem;
 }
 
-.entry-date { color: var(--fg-dim); }
-
-.depth-badge {
-  padding: 0.1rem 0.5rem;
-  border: 1px solid currentColor;
-  font-size: 0.72rem;
-  font-weight: 600;
+/* Stacked depth "icon": arrows on top, label word below, both in depth color. */
+.depth-icon {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  gap: 0.15rem;
 }
-.depth-badge.depth-deep  { color: var(--red); }
-.depth-badge.depth-solid { color: var(--yellow); }
-.depth-badge.depth-quick { color: var(--green); }
+.depth-icon-arrows {
+  font-size: 0.85rem;
+  line-height: 0.8;
+}
+.depth-icon-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
 
 .tags-inline { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-
-.entry-summary {
-  color: var(--fg-dim);
-  font-size: 0.85rem;
-  margin-top: 0.5rem;
-  font-style: italic;
-  border-left: 2px solid var(--bg-border);
-  padding-left: 0.75rem;
-}
 
 .links-block {
   padding: 1rem 1.5rem;

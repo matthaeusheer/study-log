@@ -44,7 +44,7 @@ title: "Short descriptive title"            # required
 date: 2026-07-26                            # required, ISO date
 tags: [tag1, tag2]                          # required, lowercase-kebab
 depth: deep                                 # required: quick-read | solid | deep | repetition
-summary: "One sentence. What you learned."  # optional but strongly encouraged
+summary: "One sentence."                    # optional; allowed but not rendered on the page
 links:                                      # optional
   - label: "Human-readable name"
     url: "https://..."
@@ -224,12 +224,21 @@ natural continuation of the terminal output, not a UI chrome element.
 
 ## Entry Detail Page Layout
 
+Kept lightweight — the title carries the entry; metadata is minimal.
+
 - Back link (`← cd ..`)
-- Commit-hash-style entry ID
-- Title, date, depth badge, tags
-- Summary (blockquote style, if present)
-- Links block (`## refs`)
+- Full entry **date** at the top (ISO `YYYY-MM-DD`, with the day) in place of a truncated id
+- Title
+- Meta row: depth indicator + tags. The depth indicator uses the **same `▸` arrows
+  as the entry list** (`quick-read`=▸, `repetition`=▸▸, `solid`=▸▸, `deep`=▸▸▸),
+  but here it's a small stacked **icon**: the arrows on top with the depth **label
+  word** (`quick-read` / `repetition` / `solid` / `deep`) directly below, both in
+  the depth color. This gives the label a place to be explained (the overview list
+  stays lean with arrows only). No date here (it's already at the top).
+- Links block (`## refs`), if any
 - Rendered Markdown body
+
+No summary field is shown — the title is enough.
 
 ---
 
