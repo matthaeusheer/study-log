@@ -27,6 +27,17 @@ npm run dev
 
 Then open [http://localhost:4321](http://localhost:4321).
 
+## Deploying it
+
+I host it on Vercel. The Astro project sits in `site/`, so the `vercel.json` at
+the repo root handles the build. Five steps to stand up your own:
+
+1. **Import** the repo at [vercel.com/new](https://vercel.com/new) — it reads `vercel.json`, so Framework/build settings come out right. Hit **Deploy**. You get a live URL and auto-deploys on every push.
+2. **Create a Deploy Hook** in Vercel → *Settings → Git → Deploy Hooks* (branch `main`). Copy the URL.
+3. **Add it as a GitHub secret** named `VERCEL_DEPLOY_HOOK` (repo → *Settings → Secrets and variables → Actions*).
+4. The included workflow (`.github/workflows/daily-rebuild.yml`) then pings that hook once a day — needed because the activity grid's "today" is baked in at build time and would otherwise go stale.
+5. **Test it** from the *Actions* tab → *Daily rebuild* → *Run workflow*, and watch a fresh deploy show up in Vercel.
+
 ## Adding an entry
 
 Drop a `YYYY-MM-DD-slug.md` file in `entries/` with some frontmatter:

@@ -146,8 +146,8 @@ Palette follows GitHub's dark contribution graph, tuned to the site's darker bac
 
 ### Interaction
 
-- Hover on a cell shows a tooltip: date + entry titles for that day
-- Cells with entries are clickable (future: filter list to that day)
+- Hover on a cell shows a tooltip: date + entry titles for that day *(implemented)*
+- *(Future / not yet built)* Cells with entries could be clickable to filter the entry list to that day
 - Month labels above columns: one label per month, placed on the first week that enters that month, skipped only if it would visually overlap the previous label (≥2 columns apart). Every month in the window gets a label.
 - Day-of-week labels on the left, centered: Mon / Wed / Fri (rows are Sun–Sat)
 
@@ -269,17 +269,27 @@ natural continuation of the terminal output, not a UI chrome element.
 - `entries/` lives at the repo root, referenced via absolute path in content config
 - Build command: `npm run build` (from `site/`)
 - Output dir: `site/dist/`
-- Deploy target: Netlify or Vercel, connected to the GitHub repo
+- **Deploy target: Vercel**, connected to the GitHub repo (`matthaeusheer/study-log`). Auto-deploys on every push to `main`.
 
-### Netlify config
+### Vercel config
 
-```toml
-# netlify.toml at repo root
-[build]
-  base    = "site"
-  command = "npm run build"
-  publish = "dist"
+`vercel.json` at the repo root points the build at the `site/` subdirectory:
+
+```json
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd site && npm install && npm run build",
+  "outputDirectory": "site/dist",
+  "framework": "astro"
+}
 ```
+
+### Daily rebuild
+
+The activity grid computes "today" at build time, so it goes stale between
+pushes. A scheduled GitHub Action (`.github/workflows/daily-rebuild.yml`, cron
+`0 5 * * *` UTC) POSTs a Vercel Deploy Hook (stored in the repo secret
+`VERCEL_DEPLOY_HOOK`) once a day to trigger a fresh static build.
 
 ---
 
@@ -297,5 +307,9 @@ natural continuation of the terminal output, not a UI chrome element.
 
 ## Open Questions
 
-- Custom domain? (decide when deploying)
-- Repo visibility: public (interviewers can see source) vs. private (only the built site is public)
+- Custom domain? (not yet set up; Vercel URL for now)
+
+## Resolved
+
+- Repo visibility: **public** (interviewers can see the source).
+- Deploy target: **Vercel** with a daily-rebuild cron (see Deployment).
