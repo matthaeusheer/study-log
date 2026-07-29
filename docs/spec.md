@@ -124,6 +124,8 @@ A ~6-month grid (columns = weeks, rows = days Sun–Sat, top to bottom), rendere
 
 The grid spans **6 months centered on the current month**: 3 months in the past, the current month, and 2 months into the future. This shows both recent momentum and that the log is an ongoing, forward-looking habit. The window is snapped to whole Sun–Sat weeks covering that date range.
 
+**Date handling:** all date→`YYYY-MM-DD` keys (both entry dates and grid cells) are computed from **local** calendar components, never `toISOString()`. `toISOString()` converts to UTC, which shifts a cell's key to the previous day in any timezone ahead of UTC and lands the entry one weekday-row off. Entry frontmatter dates (parsed as UTC midnight) are likewise read via their UTC components so a `date: 2026-07-29` maps to the July 29 cell regardless of the builder's timezone.
+
 ### Intensity scoring (depth-weighted)
 
 | Depth | Score |
