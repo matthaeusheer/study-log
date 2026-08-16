@@ -2,7 +2,7 @@
 title: "Daily Algos: Finished Two-Pointer Problems"
 date: 2026-08-16
 tags: [algorithms, prefix-array, two-pointers]
-depth:           # quick-read | repetition | solid | deep
+depth: solid          # quick-read | repetition | solid | deep
 # links:               # optional — uncomment and fill in
 #   - label: "Resource name"
 #     url: "https://..."
