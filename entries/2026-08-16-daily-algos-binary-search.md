@@ -1,7 +1,7 @@
 ---
 title: "Daily Algos: Binary Search"
 date: 2026-08-16
-tags: [solid]
+tags: [algorithms, binary-search]
 depth: solid          # quick-read | repetition | solid | deep
 # links:               # optional — uncomment and fill in
 #   - label: "Resource name"
