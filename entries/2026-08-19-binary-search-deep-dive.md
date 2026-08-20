@@ -1,8 +1,8 @@
 ---
 title: "Binary Search Deep Dive"
 date: 2026-08-19
-tags: [deep]
-depth: solid          # quick-read | repetition | solid | deep
+tags: [algoriths, binary-search]
+depth: deep          # quick-read | repetition | solid | deep
 # links:               # optional — uncomment and fill in
 #   - label: "Resource name"
 #     url: "https://..."
