@@ -18,4 +18,6 @@ depth: deep          # quick-read | repetition | solid | deep
   * Process tree, PID 1
   * Segmentation Faults
   * App in Container as PID 1 and Zombie-processes
+  * ps, vmmap, pstree, ps (rss, vsize) cli tools
+  * posix, unix, linux, macos relationships
 
